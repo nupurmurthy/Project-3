@@ -11,6 +11,8 @@
 
   <script src="https://d3js.org/d3.v5.min.js"></script>
 
+<!--Plotly.js-->
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 
   <style>
     #chart {
@@ -1585,7 +1587,7 @@ var label = svg.append("text")
     .attr("text-anchor", "end")
     .attr("y", height - 24)
     .attr("x", width)
-    .text(1800);
+    .text(1950);
  var format = d3.format(".2s");
 var tip = d3.tip()
   .attr('class', 'd3-tip')
@@ -1610,7 +1612,7 @@ d3.json("static/nations.json", function(nations) {
     		.call(tip)
     		.attr("class", "dots")
     	.selectAll(".dot")
-    		.data(interpolateData(1800))
+    		.data(interpolateData(1950))
     	.enter().append("circle")
     		.on('mouseover', tip.show)
      		.on('mouseout', tip.hide)
@@ -1650,7 +1652,7 @@ d3.json("static/nations.json", function(nations) {
   	// After the transition finishes, you can mouseover to change the year.
   	function enableInteraction() {
       	var yearScale = d3.scale.linear()
-        	.domain([1800, 2009])
+        	.domain([1950, 2009])
         	.range([box.x + 10, box.x + box.width - 10])
         	.clamp(true);
 
@@ -1671,7 +1673,7 @@ d3.json("static/nations.json", function(nations) {
   	// Tweens the entire chart by first tweening the year, and then the data.
   	// For the interpolated data, the dots and label are redrawn.
   	function tweenYear() {
-      	var year = d3.interpolateNumber(1800, 2009);
+      	var year = d3.interpolateNumber(1950, 2009);
       	return function(t) { displayYear(year(t)); };
     }
 
@@ -1708,6 +1710,100 @@ d3.json("static/nations.json", function(nations) {
     }
 });
 </script>
+<div class="showcase__section" id="bubble">
+  <div class="spacer --small"></div>
+  <div id="bubbleplots">
+    <div class="bubbleplot" data-num="0">
+      <div class="plot" id="plotdiv"></div>
+      <div class="control-row">
+        Country: <select class="countrydata">
+        </select>
+      </div>
+    </div>
+  </div>
+</div>
+      
+<script>
+       Plotly.d3.csv('https://raw.githubusercontent.com/plotly/datasets/master/gapminderDataFiveYear.csv', function(err, rows){
+
+function unpack(rows, key) {
+    return rows.map(function(row) { return row[key]; });
+}
+
+var allCountryNames = unpack(rows, 'country'),
+allYear = unpack(rows, 'year'),
+allGdp = unpack(rows, 'gdpPercap'),
+listofCountries = [],
+currentCountry,
+currentGdp = [],
+currentYear = [];
+
+for (var i = 0; i < allCountryNames.length; i++ ){
+if (listofCountries.indexOf(allCountryNames[i]) === -1 ){
+  listofCountries.push(allCountryNames[i]);
+}
+}
+
+function getCountryData(chosenCountry) {
+currentGdp = [];
+currentYear = [];
+for (var i = 0 ; i < allCountryNames.length ; i++){
+  if ( allCountryNames[i] === chosenCountry ) {
+    currentGdp.push(allGdp[i]);
+    currentYear.push(allYear[i]);
+  } 
+}
+};
+
+// Default Country Data
+setBubblePlot('Afghanistan');
+
+function setBubblePlot(chosenCountry) {
+getCountryData(chosenCountry);  
+
+var trace1 = {
+  x: currentYear,
+  y: currentGdp,
+  mode: 'lines+markers',
+  marker: {
+    size: 12, 
+    opacity: 0.5
+  }
+};
+
+var data = [trace1];
+
+var layout = {
+  title: 'GDP per cap according to Country<br>'+ chosenCountry + ' GDP'
+};
+
+Plotly.newPlot('plotdiv', data, layout, {showSendToCloud: true});
+};
+
+var innerContainer = document.querySelector('[data-num="0"'),
+plotEl = innerContainer.querySelector('.plot'),
+countrySelector = innerContainer.querySelector('.countrydata');
+
+function assignOptions(textArray, selector) {
+for (var i = 0; i < textArray.length;  i++) {
+  var currentOption = document.createElement('option');
+  currentOption.text = textArray[i];
+  selector.appendChild(currentOption);
+}
+}
+
+assignOptions(listofCountries, countrySelector);
+
+function updateCountry(){
+setBubblePlot(countrySelector.value);
+}
+
+countrySelector.addEventListener('change', updateCountry, false);
+});
+        </script>
+
+
+<div> haha</div>
 
       <footer id="footer">
       
