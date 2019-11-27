@@ -9,101 +9,10 @@
   <link rel="stylesheet" href="static/bootstrap.min.css" media="screen">
   <link rel="stylesheet" href="static/bootstrap.css">
 
-<<<<<<< HEAD
 
   <link href="{{ url_for('static', filename='static/bootstrap.min.css') }}" rel="stylesheet">
   <script src="https://d3js.org/d3.v5.min.js"></script>
 
-=======
-  <script src="https://d3js.org/d3.v5.min.js"></script>
-
-<!--Plotly.js-->
-<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-
-  <style>
-    #chart {
-        font-family: "Helvetica Neue";
-        margin-left: -20px;
-        height: 506px;
-    }
-    
-    .dot { stroke: #000; }
-    
-    .axis path, .axis line {
-        fill: none;
-        stroke: #000;
-        shape-rendering: crispEdges;
-    }
-    
-    .year.label {
-        font: 500 196px "Helvetica Neue";
-        fill: #ddd;
-    }
-    
-    .overlay {
-        fill: none;
-        pointer-events: all;
-        cursor: ew-resize;
-    }
-      .d3-tip {
-      font-family: "Helvetica Neue";
-      line-height: 1;
-      font-weight: bold;
-      padding: 12px;
-      background: rgba(0, 0, 0, 0.8);
-      color: #fff;
-      border-radius: 2px;
-      pointer-events: none;
-    }
-    
-    /* Creates a small triangle extender for the tooltip */
-    .d3-tip:after {
-      box-sizing: border-box;
-      display: inline;
-      font-size: 10px;
-      width: 100%;
-      line-height: 1;
-      color: rgba(0, 0, 0, 0.8);
-      position: absolute;
-      pointer-events: none;
-    }
-    
-    /* Northward tooltips */
-    .d3-tip.n:after {
-      content: "\25BC";
-      margin: -1px 0 0 0;
-      top: 100%;
-      left: 0;
-      text-align: center;
-    }
-    
-    /* Eastward tooltips */
-    .d3-tip.e:after {
-      content: "\25C0";
-      margin: -4px 0 0 0;
-      top: 50%;
-      left: -8px;
-    }
-    
-    /* Southward tooltips */
-    .d3-tip.s:after {
-      content: "\25B2";
-      margin: 0 0 1px 0;
-      top: -8px;
-      left: 0;
-      text-align: center;
-    }
-    
-    /* Westward tooltips */
-    .d3-tip.w:after {
-      content: "\25B6";
-      margin: -4px 0 0 -1px;
-      top: 50%;
-      left: 100%;
-    }
-    </style>
-
->>>>>>> 07a24665762f544d41432fd77be30b3fafe4f66a
 </head>
 
   <body>
@@ -1534,189 +1443,7 @@
 
       
 <div id="chart"></div>
-
-<script src="https://d3js.org/d3.v3.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-tip/0.6.3/d3-tip.min.js"></script>
-  <script>
-// Chart dimensions.
-var margin = { top: 19.5, right: 19.5, bottom: 19.5, left: 39.5 },
-    width = 960 - margin.right,
-    height = 500 - margin.top - margin.bottom;
-
-// Various scales. These domains make assumptions of data, naturally.
-var xScale = d3.scale.log().domain([300, 1e5]).range([0, width]),
-    yScale = d3.scale.linear().domain([10, 85]).range([height, 0]),
-    radiusScale = d3.scale.sqrt().domain([0, 5e8]).range([0, 40]),
-    colorScale = d3.scale.category10();
-
-// The x & y axes.
-var xAxis = d3.svg.axis().scale(xScale).orient("bottom").ticks(12, d3.format(",d"));
-var yAxis = d3.svg.axis().scale(yScale).orient("left");
-
-// Create the SVG container and set the origin.
-var svg = d3.select("#chart").append("svg")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
-  .append("g")
-    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-// Add the x-axis.
-svg.append("g")
-    .attr("class", "x axis")
-    .attr("transform", "translate(0," + height + ")")
-    .call(xAxis);
-
-// Add the y-axis.
-svg.append("g")
-    .attr("class", "y axis")
-    .call(yAxis);
-
-// Add an x-axis label.
-svg.append("text")
-    .attr("class", "x label")
-    .attr("text-anchor", "end")
-    .attr("x", width)
-    .attr("y", height - 6)
-    .text("income per capita, inflation-adjusted (dollars)");
-
-// Add a y-axis label.
-svg.append("text")
-    .attr("class", "y label")
-    .attr("text-anchor", "end")
-    .attr("y", 6)
-    .attr("dy", ".75em")
-    .attr("transform", "rotate(-90)")
-    .text("life expectancy (years)");
-
-// Add the year label; the value is set on transition.
-var label = svg.append("text")
-    .attr("class", "year label")
-    .attr("text-anchor", "end")
-    .attr("y", height - 24)
-    .attr("x", width)
-    .text(1950);
- var format = d3.format(".2s");
-var tip = d3.tip()
-  .attr('class', 'd3-tip')
-  .direction('s')
-  .html(function(d) {
-    return "<p><strong>" + d.name + "</strong></p><p><strong>Population: </strong>" + format(d.population) + "</p>";
-  })
-// Various accessors that specify the four dimensions of data to visualize.
-function x(d) { return d.income; }
-function y(d) { return d.lifeExpectancy; }
-function radius(d) { return d.population; }
-function color(d) { return d.region; }
-function key(d) { return d.name; }
-
-// Load the data.
-d3.json("static/nations.json", function(nations) {
-  	// A bisector since many nation's data is sparsely-defined.
-  	var bisect = d3.bisector(function(d) { return d[0]; });
-
-  	// Add a dot per nation. Initialize the data at 1800, and set the colors.
-  	var dot = svg.append("g")
-    		.call(tip)
-    		.attr("class", "dots")
-    	.selectAll(".dot")
-    		.data(interpolateData(1950))
-    	.enter().append("circle")
-    		.on('mouseover', tip.show)
-     		.on('mouseout', tip.hide)
-    		.attr("class", function (d) { return "dot " + d.name; })
-      	.style("fill", function(d) { return colorScale(color(d)); })
-      	.call(position)
-      	.sort(order);
-  
-  	// Add an overlay for the year label.
-  	var box = label.node().getBBox();
-  
-  	var overlay = svg.append("rect")
-    		.attr("class", "overlay")
-    		.attr("x", box.x)
-    		.attr("y", box.y)
-    		.attr("width", box.width)
-    		.attr("height", box.height)
-    		.on("mouseover", enableInteraction);
-  
-  	// Start a transition that interpolates the data based on year.
-  	svg.transition()
-      	.duration(15000)
-      	.ease("linear")
-      	.tween("year", tweenYear)
-      	.each("end", enableInteraction);
-  
-  	// Positions the dots based on data.
-  	function position(dot) {
-      	dot.attr("cx", function(d) { return xScale(x(d)); })
-          	.attr("cy", function(d) { return yScale(y(d)); })
-          	.attr("r", function(d) { return radiusScale(radius(d)); });
-    		}
-  
-  	// Defines a sort order so that the smallest dots are drawn on top.
-  	function order(a, b) { return radius(b) - radius(a); }
-  
-  	// After the transition finishes, you can mouseover to change the year.
-  	function enableInteraction() {
-      	var yearScale = d3.scale.linear()
-        	.domain([1950, 2009])
-        	.range([box.x + 10, box.x + box.width - 10])
-        	.clamp(true);
-
-      	// Cancel the current transition, if any.
-      	svg.transition().duration(0);
-
-      	overlay
-          	.on("mouseover", mouseover)
-          	.on("mouseout", mouseout)
-          	.on("mousemove", mousemove)
-          	.on("touchmove", mousemove);
-
-      	function mouseover() { label.classed("active", true); }
-      	function mouseout() { label.classed("active", false); }
-      	function mousemove() { displayYear(yearScale.invert(d3.mouse(this)[0])); }
-  	}
-
-  	// Tweens the entire chart by first tweening the year, and then the data.
-  	// For the interpolated data, the dots and label are redrawn.
-  	function tweenYear() {
-      	var year = d3.interpolateNumber(1950, 2009);
-      	return function(t) { displayYear(year(t)); };
-    }
-
-  	// Updates the display to show the specified year.
-  	function displayYear(year) {
-      	console.log(dot.data(interpolateData(year), key).call(position).sort(order))
-        dot.data(interpolateData(year), key).call(position).sort(order);
-      	label.text(Math.round(year));
-    }
-
-  	// Interpolates the dataset for the given (fractional) year.
-  	function interpolateData(year) {
-      	return nations.map(function(d) {
-          	return {
-              	name: d.name,
-              	region: d.region,
-              	income: interpolateValues(d.income, year),
-              	population: interpolateValues(d.population, year),
-              	lifeExpectancy: interpolateValues(d.lifeExpectancy, year)
-            };
-        });
-    }
-
-  	// Finds (and possibly interpolates) the value for the specified year.
-  	function interpolateValues(values, year) {
-      	var i = bisect.left(values, year, 0, values.length - 1),
-            a = values[i];
-      	if (i > 0) {
-          	var b = values[i - 1],
-                t = (year - a[0]) / (b[0] - a[0]);
-          	return a[1] * (1 - t) + b[1] * t;
-        }
-      return a[1];
-    }
-});
-</script>
+<script src="static/income.js"></script>
 <div class="showcase__section" id="bubble">
   <div class="spacer --small"></div>
   <div id="bubbleplots">
@@ -1739,7 +1466,7 @@ function unpack(rows, key) {
 
 var allCountryNames = unpack(rows, 'country'),
 allYear = unpack(rows, 'year'),
-allGdp = unpack(rows, 'gdpPercap'),
+allGdp = unpack(rows, 'lifeExp'),
 listofCountries = [],
 currentCountry,
 currentGdp = [],
@@ -1773,7 +1500,7 @@ var trace1 = {
   y: currentGdp,
   mode: 'lines+markers',
   marker: {
-    size: 12, 
+    size: 40, 
     opacity: 0.5
   }
 };
@@ -1827,6 +1554,6 @@ countrySelector.addEventListener('change', updateCountry, false);
     <script src="../_vendor/popper.js/dist/umd/popper.min.js"></script>
     <script src="../_vendor/bootstrap/dist/js/bootstrap.min.js"></script>
     <script src="../_assets/js/custom.js"></script>
-    <script src="../static/script.js"></script>
+
   </body>
 </html>

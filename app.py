@@ -11,7 +11,7 @@ app = Flask(__name__)
 
 
 # Database Setup
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///db/bellybutton.sqlite"
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///data/db_country.sqlite"
 db = SQLAlchemy(app)
 # reflect database 
 Base = automap_base()
