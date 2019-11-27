@@ -11,15 +11,15 @@ app = Flask(__name__)
 
 
 # Database Setup
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///db/bellybutton.sqlite"
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///data/db_country.sqlite"
 db = SQLAlchemy(app)
 # reflect database 
 Base = automap_base()
 # reflect the tables
 Base.prepare(db.engine, reflect=True)
 # Save references to each table
-Samples_Metadata = Base.classes.sample_metadata
-Samples = Base.classes.samples
+Samples_Metadata = Base.classes.merged_data
+#Samples = Base.classes.GDP
 
 
 @app.route("/")
