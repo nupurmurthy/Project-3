@@ -19,7 +19,6 @@ Base = automap_base()
 Base.prepare(db.engine, reflect=True)
 # Save references to each table
 Samples_Metadata = Base.classes.merged_data
-#Samples = Base.classes.GDP
 
 
 @app.route("/")
