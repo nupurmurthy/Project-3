@@ -11,14 +11,26 @@ app = Flask(__name__)
 
 
 # Database Setup
+<<<<<<< HEAD
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///db/db_country.sqlite"
+=======
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///data/db_country.sqlite"
+>>>>>>> adf18a140c00f7937f27c5393674c5ed922a3ef3
 db = SQLAlchemy(app)
 # reflect database 
 Base = automap_base()
 # reflect the tables
 Base.prepare(db.engine, reflect=True)
+<<<<<<< HEAD
+# Save references to each tableO?
+=======
 # Save references to each table
 Samples_Metadata = Base.classes.merged_data
+<<<<<<< HEAD
+=======
+#Samples = Base.classes.GDP
+>>>>>>> adf18a140c00f7937f27c5393674c5ed922a3ef3
+>>>>>>> 4421367a478e5a9c036d756bf56bf6c6f1ffd99e
 
 
 @app.route("/")
@@ -29,8 +41,8 @@ def index():
 @app.route("/lifeexp")
 def names():
     # Use Pandas to perform the sql query
-    query_please = db.session.query(Samples).statement
-    df = pd.read_sql_query(query_please, db.session.bind)
+    #query_please = db.session.query(Samples).statement
+    #df = pd.read_sql_query(query_please, db.session.bind)
 
     return jsonify()
 
