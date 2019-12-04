@@ -11,26 +11,16 @@ app = Flask(__name__)
 
 
 # Database Setup
-<<<<<<< HEAD
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///db/db_country.sqlite"
-=======
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///data/db_country.sqlite"
->>>>>>> adf18a140c00f7937f27c5393674c5ed922a3ef3
 db = SQLAlchemy(app)
 # reflect database 
 Base = automap_base()
 # reflect the tables
 Base.prepare(db.engine, reflect=True)
-<<<<<<< HEAD
 # Save references to each tableO?
-=======
 # Save references to each table
 Samples_Metadata = Base.classes.merged_data
-<<<<<<< HEAD
-=======
 #Samples = Base.classes.GDP
->>>>>>> adf18a140c00f7937f27c5393674c5ed922a3ef3
->>>>>>> 4421367a478e5a9c036d756bf56bf6c6f1ffd99e
 
 
 @app.route("/")
@@ -39,30 +29,43 @@ def index():
 
 
 @app.route("/lifeexp")
-def names():
+def lifeexp():
     # Use Pandas to perform the sql query
-    #query_please = db.session.query(Samples).statement
-    #df = pd.read_sql_query(query_please, db.session.bind)
+    query_please = db.session.query(Samples_Metadata).statement
+    dataframe = pd.read_sql_query(query_please, db.session.bind)
 
-    return jsonify()
+    return jsonify(list(dataframe.columns)[2:])
 
 
-@app.route("/esgdata/<sample>")
-def sample_metadata(sample):
+@app.route("/test")
+def merged_data():
+  
+    sel = [
+        Samples_Metadata.Country_Code,
+        Samples_Metadata.Country_Name,
+        # Samples_Metadata.Year,
+        # Samples_Metadata.Value_Population,
+        # Samples_Metadata.Value_Life,
+        # Samples_Metadata.Value_GDP,
+        
+    ]
 
-    # Add query data to dictionary 
-    sel = [Samples_Metadata.sample, Samples_Metadata.sample2]
-    results = db.session.query(*sel).filter(Samples_Metadata.sample == sample).all()
-
-    # Pass data to dictionary
-    sample_metadata = {}
+    results = db.session.query(*sel).all()
+    
+    # Create a dictionary entry for each row of metadata information
+    merged_data = []
     for result in results:
-        sample_metadata["sample"] = result[0]
-        sample_metadata["sample2"] = result[1]
-
-    print(sample_metadata)
-    return jsonify(sample_metadata)
-
+        country = {}
+        country["Country_Code"] = result[0]
+        country["Country_Name"] = result[1]
+        # merged_data["Country_Code"] = result[0]
+        # merged_data["Country_Name"] = result[1]
+        # merged_data["Year"] = result[2]
+        # merged_data["Value_Population"] = result[3]
+        # merged_data["Value_Life"] = result[4]
+        # merged_data["Value_GDP"] = result[5]
+        merged_data.append(country)
+    return jsonify(merged_data)
 
 
 
