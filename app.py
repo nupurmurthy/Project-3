@@ -11,15 +11,13 @@ app = Flask(__name__)
 
 
 # Database Setup
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///db/bellybutton.sqlite"
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///db/db_country.sqlite"
 db = SQLAlchemy(app)
 # reflect database 
 Base = automap_base()
 # reflect the tables
 Base.prepare(db.engine, reflect=True)
-# Save references to each table
-Samples_Metadata = Base.classes.sample_metadata
-Samples = Base.classes.samples
+# Save references to each tableO?
 
 
 @app.route("/")
@@ -30,8 +28,8 @@ def index():
 @app.route("/lifeexp")
 def names():
     # Use Pandas to perform the sql query
-    query_please = db.session.query(Samples).statement
-    df = pd.read_sql_query(query_please, db.session.bind)
+    #query_please = db.session.query(Samples).statement
+    #df = pd.read_sql_query(query_please, db.session.bind)
 
     return jsonify()
 
