@@ -37,16 +37,16 @@ def lifeexp():
     return jsonify(list(dataframe.columns)[2:])
 
 
-@app.route("/test")
+@app.route("/data")
 def merged_data():
   
     sel = [
         Samples_Metadata.Country_Code,
         Samples_Metadata.Country_Name,
-        # Samples_Metadata.Year,
-        # Samples_Metadata.Value_Population,
-        # Samples_Metadata.Value_Life,
-        # Samples_Metadata.Value_GDP,
+        Samples_Metadata.Year,
+        Samples_Metadata.Value_Population,
+        Samples_Metadata.Value_Life,
+        Samples_Metadata.Value_GDP,
         
     ]
 
@@ -58,12 +58,11 @@ def merged_data():
         country = {}
         country["Country_Code"] = result[0]
         country["Country_Name"] = result[1]
-        # merged_data["Country_Code"] = result[0]
-        # merged_data["Country_Name"] = result[1]
-        # merged_data["Year"] = result[2]
-        # merged_data["Value_Population"] = result[3]
-        # merged_data["Value_Life"] = result[4]
-        # merged_data["Value_GDP"] = result[5]
+        country["Year"] = result[2]
+        country["Value_Population"] = result[3]
+        country["Value_Life"] = result[4]
+        country["Value_GDP"] = result[5]
+
         merged_data.append(country)
     return jsonify(merged_data)
 
